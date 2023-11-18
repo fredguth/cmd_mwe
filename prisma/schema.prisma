@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Material {
+  ID_MATERIAL Int    @id @default(autoincrement())
+  CODIGOBR    String
+  DS_CLASSE   String
+  PDM         String
+  DS_MATERIAL String
+  DS_UNIDADE  String
+  DISPONIVEL  Int    @default(dbgenerated("true"))
+}
+
+model User {
+  id          String        @id
+  createdAt   Decimal       @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updatedAt   Decimal
+  cpf         String        @unique
+  email       String?       @unique
+  nome        String?
+  telefone    String?
+  UserKey     UserKey[]
+  UserSession UserSession[]
+}
+
+model UserKey {
+  id             String  @id
+  createdAt      Decimal @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updatedAt      Decimal
+  userId         String
+  hashedPassword String
+  User           User    @relation(fields: [userId], references: [id])
+}
+
+model UserSession {
+  id            String  @id
+  createdAt     Decimal @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updatedAt     Decimal
+  userId        String
+  activeExpires Int
+  idleExpires   Int
+  User          User    @relation(fields: [userId], references: [id])
+}
